@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>چت ناشناس DRPTZ</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Vazir', sans-serif;
+      background: linear-gradient(145deg, #0f0f0f, #1a1a1a);
+      color: white;
+      overflow-x: hidden;
+    }
+
+    .drptz {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.2rem;
+      color: #00ff88;
+      font-weight: bold;
+      z-index: 1000;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 60px;
+      font-size: 1.8rem;
+      color: #ffffff;
+    }
+
+    .chat-box {
+      width: 90%;
+      max-width: 500px;
+      margin: 40px auto;
+      background: #111;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00ff88;
+    }
+
+    .chat-box input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    .chat-box button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      background: #00ff88;
+      color: black;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .info {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #ccc;
+      z-index: 999;
+    }
+
+    @media (max-width: 500px) {
+      .chat-box {
+        width: 95%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="drptz">DRPTZ</div>
+  <h1>چت ناشناس با تیم ما</h1>
+
+  <div class="chat-box">
+    <input type="text" id="message" placeholder="پیامت رو بنویس..." />
+    <button onclick="sendMessage()">ارسال پیام</button>
+  </div>
+
+  <div class="info" id="user-info">در حال بارگذاری اطلاعات...</div>
+
+  <!-- صدای ارسال پیام -->
+  <audio id="send-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c1559bdfab.mp3?filename=message-pop-alert-141349.mp3" preload="auto"></audio>
+
+  <script>
+    async function getUserInfo() {
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        document.getElementById('user-info').innerText =
+          `IP: ${data.ip} | کشور: ${data.country_name} | شهر: ${data.city}`;
+      } catch {
+        document.getElementById('user-info').innerText = "خطا در دریافت اطلاعات کاربر.";
+      }
+    }
+
+    function sendMessage() {
+      const message = document.getElementById('message').value;
+      if (!message.trim()) return;
+
+      fetch('https://api.telegram.org/bot8145145957:AAFi82VMdaF5ShzbVUhkDKsSryE_q2TCzmU/sendMessage', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          chat_id: 6830023746,
+          text: `📨 پیام ناشناس:\n${message}`
+        })
+      }).then(() => {
+        document.getElementById('message').value = '';
+        document.getElementById('send-sound').play(); // پخش صدا
+        alert('پیام شما ارسال شد.');
+      }).catch(() => alert('خطا در ارسال پیام.'));
+    }
+
+    getUserInfo();
+  </script>
+</body>
+</html>
