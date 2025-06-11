@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DRPTZ - Anonymous Chat</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #000000, #0f2027);
+      color: white;
+      overflow: hidden;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      color: #00ff88;
+      margin-top: 20px;
+    }
+
+    .instruction {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 1.2rem;
+      color: #ccc;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 40px;
+    }
+
+    textarea {
+      width: 80%;
+      height: 150px;
+      padding: 15px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      resize: none;
+      box-shadow: 0 0 10px #00ff88;
+      background-color: #111;
+      color: #00ff88;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #00ff88;
+      color: black;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00ff88;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #00cc66;
+    }
+
+    .drptz {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 1.5rem;
+      color: #00ff88;
+      font-weight: bold;
+    }
+
+    .info {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+
+    .cube {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: #00ff88;
+      opacity: 0.2;
+      animation: float 8s infinite ease-in-out alternate;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+      100% {
+        transform: translateY(-100vh) rotate(360deg);
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="drptz">DRPTZ</div>
+
+  <h1>چت ناشناس با تیم ما</h1>
+  <div class="instruction">[هرچی میخوای به صورت ناشناس اینجا بنویس]</div>
+
+  <div class="container">
+    <textarea id="message" placeholder="پیام خود را بنویسید..."></textarea>
+    <button onclick="sendMessage()">ارسال پیام</button>
+  </div>
+
+  <div class="info" id="info"></div>
+
+  <!-- Floating cubes -->
+  <script>
+    for (let i = 0; i < 30; i++) {
+      const cube = document.createElement('div');
+      cube.className = 'cube';
+      cube.style.left = `${Math.random() * 100}%`;
+      cube.style.top = `${Math.random() * 100}vh`;
+      cube.style.animationDuration = `${4 + Math.random() * 6}s`;
+      cube.style.width = cube.style.height = `${10 + Math.random() * 20}px`;
+      document.body.appendChild(cube);
+    }
+  </script>
+
+  <!-- Telegram Bot Integration -->
+  <script>
+    async function sendMessage() {
+      const text = document.getElementById('message').value.trim();
+      if (!text) return alert("پیام خالی است.");
+
+      const browser = navigator.userAgent;
+      const lang = navigator.language;
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const platform = navigator.platform;
+      const location = window.location.href;
+
+      const finalText = `پیام ناشناس:\n\n${text}\n\n📱 Info:\nBrowser: ${browser}\nLang: ${lang}\nTZ: ${timezone}\nPlatform: ${platform}\nPage: ${location}`;
+
+      const chatId = '6830023746';
+      const token = '8145145957:AAFi82VMdaF5ShzbVUhkDKsSryE_q2TCzmU';
+      const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+      await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId, text: finalText }),
+      });
+
+      document.getElementById("message").value = "";
+      alert("پیام ارسال شد ✅");
+    }
+
+    // نمایش اطلاعات در گوشه
+    window.onload = () => {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const lang = navigator.language;
+      const os = navigator.platform;
+      document.getElementById("info").innerText = `🧭 ${tz} | 🌐 ${lang} | 💻 ${os}`;
+    };
+  </script>
+
+</body>
+</html>
