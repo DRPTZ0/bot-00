@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Anonymous Message</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #000000, #003300);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      color: #00ff66;
+      margin-bottom: 10px;
+      animation: pulse 2s infinite;
+    }
+
+    p {
+      margin: 5px 0 20px;
+      font-size: 1rem;
+      color: #cccccc;
+    }
+
+    textarea {
+      width: 90%;
+      max-width: 500px;
+      height: 120px;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      resize: none;
+      outline: none;
+      background: #111;
+      color: #00ff66;
+      box-shadow: 0 0 15px rgba(0,255,102,0.5);
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #00ff66;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #000;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #00cc55;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>DRPTZ</h1>
+  <p>هرچی میخوای به صورت ناشناس اینجا بنویس</p>
+
+  <textarea id="messageInput" placeholder="Write something..."></textarea>
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    const input = document.getElementById('messageInput');
+    const chatID = '6830023746';
+    const botToken = '8145145957:AAFi82VMdaF5ShzbVUhkDKsSryE_q2TCzmU';
+
+    function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return alert('Please write a message before sending.');
+
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatID,
+          text: text
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.ok) {
+          input.value = '';
+          alert('Message sent anonymously ✅');
+        } else {
+          alert('Failed to send message ❌');
+        }
+      })
+      .catch(err => alert('Error sending message: ' + err));
+    }
+  </script>
+
+</body>
+</html>
