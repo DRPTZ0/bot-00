@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DRPTZ Chat</title>
+  <style>
+    :root {
+      --bg-dark: #0f0f0f;
+      --text-dark: #ffffff;
+      --bg-light: #f4f4f4;
+      --text-light: #000000;
+      --accent: #00ffaa;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-dark);
+      transition: all 0.3s ease;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .light-mode {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    header {
+      text-align: center;
+      padding: 1rem 0;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .drptz-title {
+      font-size: 2rem;
+      color: var(--accent);
+      text-align: center;
+      margin: 0.5rem 0;
+    }
+
+    .chat-box {
+      margin: 2rem auto;
+      width: 90%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
+      z-index: 1;
+      position: relative;
+    }
+
+    .chat-box input, .chat-box button {
+      padding: 0.7rem;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .chat-box input {
+      flex-grow: 1;
+      background: #222;
+      color: white;
+    }
+
+    .chat-box button {
+      background-color: var(--accent);
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .footer-info {
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 1rem;
+      opacity: 0.7;
+      z-index: 1;
+      position: relative;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--accent);
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <header>چت با تیم ما</header>
+  <div class="drptz-title">DRPTZ</div>
+
+  <div class="chat-box">
+    <label for="message">هرچی دلت میخواد به صورت ناشناس بنویس</label>
+    <input type="text" id="message" placeholder="پیامت رو وارد کن..." />
+    <button onclick="sendMessage()">ارسال پیام</button>
+  </div>
+
+  <div class="footer-info" id="user-info">Loading location & device info...</div>
+  <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 80 },
+        "color": { "value": "#00ffaa" },
+        "shape": {
+          "type": "circle",
+          "stroke": { "width": 0, "color": "#000000" }
+        },
+        "opacity": {
+          "value": 0.5,
+          "random": true
+        },
+        "size": {
+          "value": 4,
+          "random": true
+        },
+        "line_linked": {
+          "enable": true,
+          "distance": 150,
+          "color": "#00ffaa",
+          "opacity": 0.4,
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 2,
+          "direction": "none",
+          "random": false,
+          "straight": false,
+          "bounce": false
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": { "enable": true, "mode": "grab" },
+          "onclick": { "enable": true, "mode": "push" }
+        },
+        "modes": {
+          "grab": { "distance": 140, "line_linked": { "opacity": 1 } },
+          "push": { "particles_nb": 4 }
+        }
+      },
+      "retina_detect": true
+    });
+
+    const root = document.documentElement;
+    let isDark = true;
+    function toggleTheme() {
+      isDark = !isDark;
+      document.body.classList.toggle('light-mode');
+      document.querySelector('.theme-toggle').textContent = isDark ? "🌙" : "☀️";
+    }
+
+    function sendMessage() {
+      const msg = document.getElementById('message').value;
+      if (!msg) return;
+      const chatId = "6830023746";
+      const token = "8145145957:AAFi82VMdaF5ShzbVUhkDKsSryE_q2TCzmU";
+      const url = `https://api.telegram.org/bot${token}/sendMessage`;
+      const payload = {
+        chat_id: chatId,
+        text: `پیام ناشناس: ${msg}`,
+      };
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }).then(() => {
+        document.getElementById('message').value = "";
+      });
+    }
+
+    async function getUserInfo() {
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        const data = await res.json();
+        document.getElementById("user-info").innerText =
+          `IP: ${data.ip} | Country: ${data.country_name} | City: ${data.city} | ISP: ${data.org}`;
+      } catch (err) {
+        document.getElementById("user-info").innerText = "Could not load info.";
+      }
+    }
+
+    getUserInfo();
+  </script>
+</body>
+</html>
